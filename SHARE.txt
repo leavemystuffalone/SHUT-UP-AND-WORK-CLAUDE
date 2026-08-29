@@ -1,0 +1,82 @@
+SHUT UP AND WORK CLAUDE
+https://github.com/leavemystuffalone/SHUT-UP-AND-WORK-CLAUDE
+
+Claude Code talks too much. It recaps work you just watched it do,
+explains fixes you didn't ask about, restates your request back at you,
+and lays out three options instead of picking one. All of that is
+charged against your usage limit, and none of it gets read.
+
+You can write "stop explaining" in a CLAUDE.md. It works for about
+twenty messages, then it drifts back.
+
+So this is two things: a working agreement (CLAUDE.md), and hooks that
+actually enforce the parts it forgets.
+
+
+WHAT CLAUDE DOES DIFFERENTLY
+
+  SHUTS UP        No narration, no progress reports, no recaps, no
+                  "here's what I'm about to do", no re-explaining a fix
+                  you watched it make. It works, and when it's done it
+                  says so in one line.
+
+  DECIDES         It picks an approach and takes it instead of asking
+                  you to choose between three. It stops re-arguing
+                  things you already settled.
+
+  SHOWS ITS WORK  Every number it gives you carries where it came from,
+                  how big the sample was, and whether it was measured or
+                  guessed -- right next to the number. "0.4%" becomes
+                  "0.4% -- n=1,203 requests over 24h, api_log.jsonl,
+                  and it's a floor because failed reads aren't logged."
+                  You can't write that sentence without noticing when
+                  the number is broken.
+
+  CHECKS FIRST    Before it reports anything: look at one real row, not
+                  the average. Reconcile against a number that already
+                  exists -- if they disagree, THAT's the finding. Verify
+                  by running it, not by reading it. And say plainly what
+                  it did NOT check.
+
+  STOPS GUESSING  A number written in a doc is treated as a snapshot to
+                  re-count, not a fact to quote. "I couldn't measure it"
+                  never becomes "it's zero" -- it says UNRESOLVED. And
+                  it doesn't assume a field is what its name says.
+
+  HANDS WORK BACK For anything long and mechanical -- a scrape, a
+                  backfill, a migration -- it writes you a script you
+                  run yourself in one command, instead of burning your
+                  tokens sitting there grinding through it. The script
+                  has to be resumable, have a --status, and be honest
+                  about what wasn't tested.
+
+
+THE SWITCH
+
+  python quiet.py on
+
+While that's on, a hook reads every reply before it's sent and blocks
+anything over 12 words, unless you asked a question -- then it gets 60.
+A blocked reply is never sent; Claude rewrites it or stays quiet.
+
+The point: a word ceiling alone doesn't work. What actually happens is
+you say "stop explaining" and the next reply is a 200-word summary that
+sits comfortably under any ceiling you set. The rule being broken isn't
+"too long", it's "talking at all after being told not to". Turning it
+off is your call -- the hook won't do it, and it tells Claude so.
+
+Off by default. Turn it on for a long unattended run, off when you want
+to talk to it.
+
+
+INSTALL
+
+  git clone https://github.com/leavemystuffalone/SHUT-UP-AND-WORK-CLAUDE
+  cd SHUT-UP-AND-WORK-CLAUDE
+  python install.py           (or --global for every project)
+
+Then restart Claude Code. Python and Claude Code, nothing else -- no
+dependencies, no network, nothing leaves your machine. Uninstall is one
+command and it won't touch your existing settings.
+
+Delete any rule you disagree with. It works in pieces.
