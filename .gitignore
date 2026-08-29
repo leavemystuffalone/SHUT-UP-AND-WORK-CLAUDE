@@ -3,3 +3,4 @@ __pycache__/
 hooks/silence.json
 hooks/quiet.config.json
 .claude/
+hooks/no_repeat.log

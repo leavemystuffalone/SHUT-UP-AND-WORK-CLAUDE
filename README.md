@@ -59,14 +59,26 @@ remember is the approach that already failed.
 
 | the reply | what happens |
 |---|---|
-| nothing at all | allowed -- and it is the expected case while working |
-| under 12 words | allowed. "Done." is not the failure |
-| up to 60 words, and you asked a question | allowed |
-| anything else | **blocked.** The turn ends with no text |
+| nothing at all | the expected case while working |
+| under 12 words | fine. "Done." is not the failure |
+| up to 60 words, and you asked a question | fine |
+| anything else | recorded in `hooks/no_repeat.log`, and the reminder tightens |
 
-A blocked reply is never sent. The reason goes back to the model, which
-rewrites or stays quiet. **Turning it off is your action** -- the block
-reason says so, so the model cannot read the switch as a suggestion.
+**Silence records rather than blocks, and that is deliberate.** A Stop
+hook cannot unsend: the reply is generated and rendered before the hook
+is asked, so refusing one shows you the long version AND the rewrite --
+twice the words the limit exists to save. Worth paying for a 500-word
+wall; not worth paying for a reply that ran twenty words over. The two
+LENGTH rules below still block. Silence is enforced ahead of the reply
+by `remind.py`, which is free because it runs first.
+
+**Turning it off is your action** -- `python quiet.py off`, and the
+hooks say so, so the model cannot read the switch as a suggestion.
+
+**A table is not narration.** Markdown table rows and fenced code blocks
+are stripped before any reply is counted: the rows ARE the answer when
+you asked for a chart, and a fenced block is a command to run rather
+than talking. A reply that is all table counts as nearly nothing.
 
 Off by default. Turn it on for a long unattended run, off when you want
 to talk.

@@ -106,14 +106,25 @@ def test() -> int:
     cases = []
     try:
         silence.set_on(True, "quiet.py --test")
-        cases.append(("silenced, 200 words, nothing asked",
-                      run(long_reply, "keep working"), True))
+        # SILENCE RECORDS, IT DOES NOT BLOCK -- AND THAT IS THE POINT.
+        #
+        # A Stop hook cannot unsend: the reply is already rendered when
+        # the hook runs, so refusing one shows you the long version AND
+        # the rewrite. The two length rules still block, because there a
+        # rewrite genuinely saves words. The silence rule does not.
+        cases.append(("silenced, 200 words, nothing asked -- recorded",
+                      run(long_reply, "keep working"), False))
         cases.append(("silenced, under 12 words",
                       run("Done.", "keep working"), False))
         cases.append(("silenced, 40-word answer to a real question",
                       run("word " * 40, "how many are left?"), False))
-        cases.append(("silenced, 200-word answer to a real question",
-                      run(long_reply, "how many are left?"), True))
+        cases.append(("silenced, 200-word answer -- recorded",
+                      run(long_reply, "how many are left?"), False))
+        _table = "Here it is." + chr(10) + chr(10) + (chr(10).join(
+            ["| a | b |", "|---|---|"] + [f"| row {i} | {i} |"
+                                          for i in range(200)]))
+        cases.append(("not silenced, a 600-cell table -- not narration",
+                      run(_table, "show me the table"), False))
         cases.append(("silenced, empty reply",
                       run("", "keep working"), False))
         silence.set_on(False, "quiet.py --test")
