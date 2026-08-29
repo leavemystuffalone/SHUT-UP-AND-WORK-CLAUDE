@@ -108,6 +108,29 @@ stop.
 
 Re-running `install.py` refreshes the hooks and leaves this file alone.
 
+## What it actually saves
+
+    python measure_savings.py
+    python measure_savings.py --by-session
+
+Reads your own Claude Code transcripts and reports how much of the
+billed output went on prose rather than tool calls, and how much of
+that the silence hook would have refused.
+
+**Measured on this author's history: 9.9% of all output tokens --
+SAMPLE 26 sessions, 17,789 assistant turns, 15.25M output tokens,
+SOURCE `~/.claude/projects/*.jsonl`, MEASURED.** Per session it ranged
+from 0.8% to 22%.
+
+That is a **FLOOR**, not the whole saving: a reply that is never sent
+is also never re-sent as input on every following turn, and the script
+does not model the input side at all. It also assumes the tool calls
+stay the same and only the talking goes.
+
+Run it on your own history before believing the number. A session that
+is mostly conversation will score far higher than one that is mostly
+edits.
+
 ## The agreement itself
 
 Read `CLAUDE.md`. The short version:

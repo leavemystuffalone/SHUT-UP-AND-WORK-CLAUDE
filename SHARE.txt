@@ -80,6 +80,20 @@ Off by default. Turn it on for a long unattended run, off when you want
 to talk to it.
 
 
+WHAT IT SAVES
+
+  python measure_savings.py
+
+Runs over your own transcripts and tells you how much of what you paid
+for was Claude talking rather than working. On this author's history:
+9.9% of all output tokens -- 26 sessions, 17,789 assistant turns,
+15.25M output tokens, measured. Per session, 0.8% to 22%.
+
+That's a floor. A reply that never gets sent also never gets re-sent as
+input on every turn afterwards, and the script doesn't count that side.
+Run it on your own history rather than trusting the number.
+
+
 INSTALL
 
   git clone https://github.com/leavemystuffalone/SHUT-UP-AND-WORK-CLAUDE
