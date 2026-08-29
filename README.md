@@ -131,6 +131,25 @@ Run it on your own history before believing the number. A session that
 is mostly conversation will score far higher than one that is mostly
 edits.
 
+`measure_subagent.py` answers the other half -- what the long-prose
+rule saves on the INPUT side, and where its threshold belongs:
+
+    python measure_subagent.py --thresholds --horizon=40
+
+| min words | diverted | tokens kept out of context |
+|---|---|---|
+| 250 | 736 | 33.8M |
+| **500** | **302** | **24.6M** |
+| 1000 | 126 | 14.8M |
+
+**500 is the knee** -- dropping to 250 buys 9M more tokens at the price
+of 434 more diversions, most of them ordinary code writes that a cold
+subagent would handle worse. SAMPLE 26 sessions / 17,822 assistant
+turns, CEILING: caching, and the subagent's own cold start, are both
+uncounted. `--horizon` is how many turns a write is assumed to survive
+before compaction retires it; without it the arithmetic assumes nothing
+is ever summarised away and reports 388M, which is not a real number.
+
 ## The agreement itself
 
 Read `CLAUDE.md`. The short version:
