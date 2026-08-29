@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+hooks/silence.json
+hooks/quiet.config.json
