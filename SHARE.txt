@@ -50,6 +50,17 @@ WHAT CLAUDE DOES DIFFERENTLY
                   has to be resumable, have a --status, and be honest
                   about what wasn't tested.
 
+  KEEPS THE
+  WINDOW EMPTY   Ask for something genuinely long -- an essay, a
+                  report, a reference doc -- and it doesn't write it at
+                  you. A subagent writes the file and hands back the
+                  path in one line. A long answer is paid for twice:
+                  once as output, then again as input on every turn
+                  after, because it stays in the context window and is
+                  re-sent. Writing it to a file itself saves nothing --
+                  the text still passes through. A subagent composes it
+                  in its own window and returns only a filename.
+
 
 THE SWITCH
 

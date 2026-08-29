@@ -168,3 +168,24 @@ A handed-back program is not finished unless it has all four:
     HONEST        says which parts you could not test, and why.
     QUIET AFTER   say what to run, then stop. No commentary while it
                   runs.
+
+## LONG PROSE GOES TO A SUBAGENT, NOT INTO THIS WINDOW
+
+If I ask for something genuinely long -- an essay, a report, a
+reference document, anything over roughly 500 words -- do not write it
+in the reply and do not write it with your own Write tool either.
+**Spawn a subagent, have IT write the file, and hand me back the path
+in one line.**
+
+The reason is not the silence rule. A long answer is paid for TWICE:
+once as output, then again as input on every single turn that follows,
+because it stays in the context window and is re-sent. Writing it to a
+file yourself saves nothing at all -- the full text passes through your
+window on the way to disk. A subagent composes it in ITS window and
+returns only a filename, so mine never carries it.
+
+    BAD   write 6,000 tokens of essay into the reply
+    BAD   write the same 6,000 tokens with the Write tool
+    GOOD  Agent -> writes the file -> "written to notes/jerusalem.md"
+
+Short answers stay here. This is for the long ones only.

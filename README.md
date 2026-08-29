@@ -126,6 +126,8 @@ Read `CLAUDE.md`. The short version:
   "it is zero"; a field is not assumed to be what it is called.
 - **It hands long mechanical jobs back to you as a one-command script**
   instead of burning your tokens grinding through them.
+- **It sends long prose to a subagent to write**, so a 6,000-token
+  essay never sits in the main window being re-sent every turn.
 
 Delete any rule you disagree with. It works in pieces.
 
