@@ -51,7 +51,8 @@ WHAT CLAUDE DOES DIFFERENTLY
                   about what wasn't tested.
 
   KEEPS THE
-  WINDOW EMPTY   Ask for something genuinely long -- an essay, a
+  WINDOW EMPTY   (enforced by a hook, not just asked for)
+                 Ask for something genuinely long -- an essay, a
                   report, a reference doc -- and it doesn't write it at
                   you. A subagent writes the file and hands back the
                   path in one line. A long answer is paid for twice:

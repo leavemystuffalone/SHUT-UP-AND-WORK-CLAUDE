@@ -1,0 +1,10 @@
+{
+  "free_words": 12,
+  "answer_words": 60,
+  "too_long": 450,
+  "short_enough": 120,
+  "long_write_words": 500,
+  "settled": [],
+  "_settled_note": "Phrases you have already accepted and do not want re-argued. A reply over short_enough words that repeats one is blocked; one clause naming it is always allowed.",
+  "_reminder_note": "Set \"reminder\" to your own text to change what is injected before every reply, or to \"\" to switch that hook off."
+}

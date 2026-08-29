@@ -77,6 +77,7 @@ to talk.
 |---|---|---|
 | `hooks/remind.py` | every prompt | injects the short rules ahead of the reply, so they cannot fade between message 5 and message 90 |
 | `hooks/no_repeat.py` | every stop | reads the reply and blocks it if it breaks them |
+| `hooks/long_write.py` | before every Write | refuses a NEW prose file over `long_write_words` and tells Claude to spawn a subagent to write it, so the text never enters this context |
 | `hooks/silence.py` | -- | the switch, the limits, and the state file |
 
 **Everything fails open.** Unreadable transcript, unknown payload,
@@ -94,11 +95,18 @@ stop.
   "answer_words": 60,
   "too_long": 450,
   "short_enough": 120,
+  "long_write_words": 500,
   "settled": []
 }
 ```
 
 - **`too_long`** -- a hard ceiling on any reply, silence or not.
+- **`long_write_words`** -- a NEW prose file (`.md`, `.txt`, `.rst`, no
+  extension) longer than this is refused by a PreToolUse hook, which
+  tells Claude to spawn a subagent to write it instead. Code is never
+  touched, and neither is an edit to a file that already exists. Set it
+  to `0` to switch the hook off; put `--long-write-ok` in the content to
+  bypass it once.
 - **`settled`** -- phrases you have already accepted and do not want
   re-argued. A long reply repeating one is blocked; **one clause naming
   it is always allowed**, because the paragraph is the failure, not the

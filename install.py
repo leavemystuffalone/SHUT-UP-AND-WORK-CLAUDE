@@ -33,16 +33,19 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC_HOOKS = os.path.join(HERE, "hooks")
-HOOK_FILES = ("silence.py", "no_repeat.py", "remind.py")
+HOOK_FILES = ("silence.py", "no_repeat.py", "remind.py",
+              "long_write.py")
 
 STOP_CMD = 'python "$CLAUDE_PROJECT_DIR/.claude/hooks/no_repeat.py"'
 PROMPT_CMD = 'python "$CLAUDE_PROJECT_DIR/.claude/hooks/remind.py"'
+WRITE_CMD = 'python "$CLAUDE_PROJECT_DIR/.claude/hooks/long_write.py"'
 
 DEFAULT_CONFIG = {
     "free_words": 12,
     "answer_words": 60,
     "too_long": 450,
     "short_enough": 120,
+    "long_write_words": 500,
     "settled": [],
     "_settled_note": (
         "Phrases you have already accepted and do not want re-argued. "
@@ -83,8 +86,9 @@ def install(is_global: bool, write_md: bool) -> int:
 
     stop = _global_cmd(base, "no_repeat.py") if is_global else STOP_CMD
     prompt = _global_cmd(base, "remind.py") if is_global else PROMPT_CMD
+    write = _global_cmd(base, "long_write.py") if is_global else WRITE_CMD
     settings_path = os.path.join(base, ".claude", "settings.json")
-    merge_settings(settings_path, stop, prompt)
+    merge_settings(settings_path, stop, prompt, write)
 
     made_md = ""
     if write_md:
@@ -113,7 +117,8 @@ def install(is_global: bool, write_md: bool) -> int:
     return 0
 
 
-def merge_settings(path: str, stop: str, prompt: str) -> None:
+def merge_settings(path: str, stop: str, prompt: str,
+                   write: str = "") -> None:
     """
     Add the two hook entries without touching anything else in the file,
     and without adding them twice. An unreadable settings.json RAISES
@@ -130,17 +135,22 @@ def merge_settings(path: str, stop: str, prompt: str) -> None:
                 raise ValueError(f"{path} is not a JSON object")
 
     hooks = data.setdefault("hooks", {})
-    for event, cmd, timeout in (("Stop", stop, 15),
-                                ("UserPromptSubmit", prompt, 10)):
+    wanted = [("Stop", stop, 15), ("UserPromptSubmit", prompt, 10)]
+    if write:
+        wanted.append(("PreToolUse", write, 10))
+    for event, cmd, timeout in wanted:
         entries = hooks.setdefault(event, [])
         already = any(h.get("command") == cmd
                       for e in entries if isinstance(e, dict)
                       for h in (e.get("hooks") or [])
                       if isinstance(h, dict))
         if not already:
-            entries.append({"hooks": [{"type": "command",
-                                       "command": cmd,
-                                       "timeout": timeout}]})
+            entry = {"hooks": [{"type": "command",
+                                "command": cmd,
+                                "timeout": timeout}]}
+            if event == "PreToolUse":
+                entry["matcher"] = "Write"
+            entries.append(entry)
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp = path + ".tmp"
@@ -163,12 +173,13 @@ def uninstall(is_global: bool) -> int:
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
-        for event in ("Stop", "UserPromptSubmit"):
+        for event in ("Stop", "UserPromptSubmit", "PreToolUse"):
             kept = []
             for e in (data.get("hooks", {}).get(event) or []):
                 inner = [h for h in (e.get("hooks") or [])
                          if "no_repeat.py" not in str(h.get("command", ""))
-                         and "remind.py" not in str(h.get("command", ""))]
+                         and "remind.py" not in str(h.get("command", ""))
+                         and "long_write.py" not in str(h.get("command", ""))]
                 if inner:
                     e["hooks"] = inner
                     kept.append(e)
